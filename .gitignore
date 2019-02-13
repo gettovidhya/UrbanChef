@@ -1,0 +1,27 @@
+
+
+
+# Built application files
+*.apk
+*.ap_
+
+# Gradle files
+gradlew
+gradlew.*
+gradle.*
+.gradle
+gradle/
+build/
+
+# Log Files
+*.iml
+/local.properties
+/.idea
+/.idea/caches/build_file_checksums.ser
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
