@@ -23,7 +23,7 @@ allprojects {
 }
 
 ext {
-    roomVersion = '1.0.0-alpha4'
+    roomVersion = '1.1.1'
 }
 
 task clean(type: Delete) {

@@ -1,5 +1,6 @@
 package in.shrividhya.urbanchef;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,6 +10,10 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import in.shrividhya.urbanchef.data.Recipe;
+import in.shrividhya.urbanchef.data.RecipeDao;
+import in.shrividhya.urbanchef.data.RecipeDatabase;
 
 public class RecipeActivity extends AppCompatActivity {
     private static final String LOG_TAG = RecipeActivity.class.getName();
@@ -27,6 +32,9 @@ public class RecipeActivity extends AppCompatActivity {
         } else {
             setRecipeArguments(bundle);
         }
+
+//        RecipeDatabase recipeDB = Room.databaseBuilder(getApplicationContext(),RecipeDatabase.class, "recipe").build();
+
     }
 
     private void setRecipeArguments(Bundle bundle) {
