@@ -1,8 +1,6 @@
 package in.shrividhya.urbanchef;
 
-import android.app.Application;
 import android.arch.persistence.room.Room;
-import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -39,9 +37,9 @@ public class EntityReadWriteTest {
             @Override
             public void run() {
                 Recipe recipe = new Recipe();
-                recipe.setName("shri");
+                recipe.setTitle("shri");
                 recipeDao.insertAll(recipe);
-                Recipe recipeResult = recipeDao.findByName("shri");
+                Recipe recipeResult = recipeDao.findByTitle("shri");
                 assertEquals(recipeResult, recipe);
             }
         }).start();

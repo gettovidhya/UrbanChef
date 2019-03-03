@@ -15,11 +15,14 @@ public class Recipe {
     @ColumnInfo(name = "category")
     private String category;
 
-    @ColumnInfo(name = "name")
-    private String name;
+    @ColumnInfo(name = "title")
+    private String title;
 
     @ColumnInfo(name = "info")
     private String info;
+
+    @ColumnInfo(name = "tags")
+    private String tags;
 
     @ColumnInfo(name = "description")
     private String description;
@@ -45,12 +48,12 @@ public class Recipe {
     @ColumnInfo(name = "createdAt")
     private String createdAt;
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String name) {
+        this.title = name;
     }
 
     public int getRecipeId() {
@@ -147,5 +150,13 @@ public class Recipe {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 }
