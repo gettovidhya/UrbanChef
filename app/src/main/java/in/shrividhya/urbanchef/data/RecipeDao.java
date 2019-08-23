@@ -22,8 +22,14 @@ public interface RecipeDao {
     @Query("SELECT * FROM recipe WHERE recipeId LIKE :id LIMIT 1")
     Recipe findById(int id);
 
+    @Query("SELECT * FROM recipe WHERE category LIKE :category LIMIT 1")
+    Recipe findByCategory(String category);
+
     @Insert
     void insertAll(Recipe... recipes);
+
+    @Insert
+    long insert(Recipe recipe);
 
     @Delete
     void delete(Recipe recipe);

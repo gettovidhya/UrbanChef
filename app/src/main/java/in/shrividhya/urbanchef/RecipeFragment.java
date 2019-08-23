@@ -12,8 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import in.shrividhya.urbanchef.data.Recipe;
 import in.shrividhya.urbanchef.data.RecipeDao;
 import in.shrividhya.urbanchef.data.RecipeDatabase;
@@ -43,11 +41,12 @@ public class RecipeFragment extends Fragment {
 
             TextView recipeTitle = rootView.findViewById(R.id.recipeTitle);
             TextView category = rootView.findViewById(R.id.category);
-            TextView recipeInfo = rootView.findViewById(R.id.recipeInfo);
-            TextView tags = rootView.findViewById(R.id.tags);
+            TextView recipeInfo = rootView.findViewById(R.id.recipeInfoText1);
+            TextView tags = rootView.findViewById(R.id.tagsText);
             TextView description = rootView.findViewById(R.id.description);
             TextView nutritionDetails = rootView.findViewById(R.id.nutritionDetails);
 
+            if(recipe == null) recipe = new Recipe();
             recipeTitle.setText(recipe.getTitle());
 //        recipeInfo.setText(recipe.getInfo());
             category.setText(recipe.getCategory());
@@ -66,7 +65,7 @@ public class RecipeFragment extends Fragment {
         Context context = this.getContext();
         if(context != null) {
             recipeDatabase = Room.databaseBuilder(getContext(), RecipeDatabase.class, "recipe").build();
-            recipeDao = recipeDatabase.recipeDao();
+            recipeDao = recipeDatabase.getRecipeDao();
             new Thread(new Runnable() {
                 @Override
                 public void run() {

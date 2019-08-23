@@ -3,6 +3,13 @@ package in.shrividhya.urbanchef.data;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import in.shrividhya.urbanchef.Constants;
 
 @Entity(tableName = "recipe")
 public class Recipe {
@@ -18,8 +25,8 @@ public class Recipe {
     @ColumnInfo(name = "title")
     private String title;
 
-    @ColumnInfo(name = "info")
-    private String info;
+//    @ColumnInfo(name = "info")
+//    private String info;
 
     @ColumnInfo(name = "tags")
     private String tags;
@@ -47,6 +54,30 @@ public class Recipe {
 
     @ColumnInfo(name = "createdAt")
     private String createdAt;
+
+//    @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
+    @TypeConverters({Converters.class})
+    private JSONObject info = new JSONObject();
+
+    public static JSONObject newJSONObject(String info, String image){
+        try {
+            return new JSONObject().
+                    put(Constants.RECIPE_INFO_VALUE, info).
+                    put(Constants.RECIPE_INFO_IMAGE, image);
+        } catch (JSONException e) {
+            Log.d(Recipe.class.getName(), "Exception while getting RecipeJSONObject");
+            return new JSONObject();
+        }
+    }
+
+    public static JSONObject getRecipeInfoJson(String jsonStr) {
+        try {
+            return new JSONObject(jsonStr);
+        } catch (Exception e) {
+            Log.e( Recipe.class.getName(), "Error parsing recipe info into JSON", e);
+            return new JSONObject(){};
+        }
+    }
 
     public String getTitle() {
         return title;
@@ -80,11 +111,11 @@ public class Recipe {
         this.category = category;
     }
 
-    public String getInfo() {
+    public JSONObject getInfo() {
         return info;
     }
 
-    public void setInfo(String info) {
+    public void setInfo(JSONObject info) {
         this.info = info;
     }
 
@@ -158,5 +189,15 @@ public class Recipe {
 
     public void setTags(String tags) {
         this.tags = tags;
+    }
+
+    @Override
+    public String toString() {
+        return "Recipe{"+
+                "id= "+ recipeId +
+                "info= " + info +
+                "category= " + category +
+                "title= " + title +
+                "}";
     }
 }

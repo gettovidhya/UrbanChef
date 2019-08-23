@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Urban Chef</string>
+    <string name="RECIPE_INFO_VALUE">info_value</string>
+    <string name="RECIPE_INFO_IMAGE">info_image</string>
 </resources>
