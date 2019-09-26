@@ -8,8 +8,20 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayerSupportFragment;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.youtube.YouTube;
+
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,14 +29,18 @@ import in.shrividhya.urbanchef.data.Recipe;
 import in.shrividhya.urbanchef.data.RecipeDao;
 import in.shrividhya.urbanchef.data.RecipeDatabase;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements YouTubePlayer.OnInitializedListener {
 
     private static String LOG_TAG = MainActivity.class.getName();
+    private static final String PROPERTIES_FILENAME = "youtube.properties";
+    private static int MAX_VIDEOS = 10;
     private static MainActivity _instance;
     private boolean isShowingRecipe = false;
     private static String FRAGMENT_STATE = "state_of_fragment";
     public  static RecipeDao recipeDao = null;
+    private static YouTube youTube;
     long recipeId;
+    private boolean wasYoutubePlayerInitialised = false;
 
     public static MainActivity getInstance() {
         if(_instance == null){
@@ -33,12 +49,16 @@ public class MainActivity extends AppCompatActivity {
         return _instance;
     }
 
+    public static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
+    public static final JsonFactory JSON_FACTORY = new JacksonFactory();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_USER);
         setContentView(R.layout.activity_main);
         Button toggler = findViewById(R.id.toggler);
+        initialiseYoutubePlayer();
         if(savedInstanceState != null) {
             isShowingRecipe = savedInstanceState.getBoolean(FRAGMENT_STATE);
         }
@@ -54,6 +74,35 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         addSampleDataToTable();
+        searchRelevantVideos();
+    }
+
+    private void searchRelevantVideos() {
+//        Properties properties = new Properties();
+//        try {
+//            InputStream in = this.getClass().getResourceAsStream("/"+ PROPERTIES_FILENAME);
+//            properties.load(in);
+//        } catch (IOException e) {
+//            Log.e(LOG_TAG, "There was an error reading " + PROPERTIES_FILENAME + ": " + e.getCause()
+//                    + " : " + e.getMessage());
+//            return;
+//        }
+
+        try {
+            youTube = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, new HttpRequestInitializer() {
+                @Override
+                public void initialize(HttpRequest request) throws IOException {
+
+                }
+            }).setApplicationName("Urban Chef").build();
+
+            YouTube.Search.List search = youTube.search().list("id, snippet");
+//            String apiKey = properties.getProperty("youtube.apikey");
+//            search.setKey(apiKey);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void addSampleDataToTable() {
@@ -82,6 +131,12 @@ public class MainActivity extends AppCompatActivity {
 //                }
             }
         }).start();
+
+
+        // Initializing credentials and service object.
+//        mCredential = GoogleAccountCredential.usingOAuth2(
+//                getApplicationContext(), Arrays.asList(SCOPES))
+//                .setBackOff(new ExponentialBackOff());
     }
 
     @Override
@@ -92,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void showRecipeFragment() {
         RecipeFragment recipeFragment = RecipeFragment.getInstance();
+
         Bundle arguments = new Bundle();
         arguments.putInt("recipeId", (int) recipeId);
         recipeFragment.setArguments(arguments);
@@ -99,6 +155,21 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.fragment_container, recipeFragment).addToBackStack(null).commit();
         isShowingRecipe = true;
+    }
+
+    private void initialiseYoutubePlayer() {
+        YouTubePlayerSupportFragment youTubePlayerFragment = null;
+        if (getSupportFragmentManager() != null) {
+            youTubePlayerFragment = (YouTubePlayerSupportFragment) getSupportFragmentManager().findFragmentById(R.id.youtube_fragment);
+            if(youTubePlayerFragment != null)
+                youTubePlayerFragment.initialize("AIzaSyBPN-2LEVzl6tk3lCOSayq815JDWJQJQdg", this);
+            else
+                Log.d("Youtube Player", "youTubePlayerFragment is null");
+        } else {
+            Log.d("Youtube Player", "fragmentManager is null");
+        }
+        wasYoutubePlayerInitialised = true;
+
     }
 
     public void hideRecipeFragment() {
@@ -112,6 +183,23 @@ public class MainActivity extends AppCompatActivity {
 
     public void showRecipe() {
 
+    }
+
+    @Override
+    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean wasRestored) {
+        if(youTubePlayer == null) {
+            return;
+        } else if(wasRestored) {
+            youTubePlayer.play();
+        } else {
+            youTubePlayer.cueVideo("Z2OYPV2vnaQ");
+            youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
+        }
+    }
+
+    @Override
+    public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
+        Log.d("Youtube Player", "Failed to initialize");
     }
 
 //    public void startRecipeActivity(View view) {

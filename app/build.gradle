@@ -29,5 +29,9 @@ dependencies {
     implementation 'com.android.support:support-v4:28.0.0'
     implementation "android.arch.persistence.room:runtime:$rootProject.roomVersion"
     annotationProcessor "android.arch.persistence.room:compiler:$rootProject.roomVersion"
+    implementation('com.google.apis:google-api-services-youtube:v3-rev212-1.25.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+    implementation files('libs/YouTubeAndroidPlayerApi.jar')
 //    androidTestImplementation "android.arch.persistence.room:testing:$rootProject.roomVersion"
 }

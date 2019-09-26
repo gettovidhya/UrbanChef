@@ -12,11 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+
 import in.shrividhya.urbanchef.data.Recipe;
 import in.shrividhya.urbanchef.data.RecipeDao;
 import in.shrividhya.urbanchef.data.RecipeDatabase;
 
-public class RecipeFragment extends Fragment {
+public class RecipeFragment extends Fragment implements YouTubePlayer.OnInitializedListener {
     private static final String LOG_TAG = RecipeFragment.class.getName();
     private int recipeId;
     public Recipe recipe;
@@ -29,6 +32,11 @@ public class RecipeFragment extends Fragment {
             _instance = new RecipeFragment();
         }
         return _instance;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Nullable
@@ -76,5 +84,21 @@ public class RecipeFragment extends Fragment {
         } else {
             Log.d(LOG_TAG, "Error creating DB, Context is null");
         }
+    }
+
+    @Override
+    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean wasRestored) {
+        if(youTubePlayer == null) {
+        } else if(wasRestored) {
+            youTubePlayer.play();
+        } else {
+            youTubePlayer.cueVideo("oHg5SJYRHA0");
+            youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
+        }
+    }
+
+    @Override
+    public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
+        Log.d("Youtube Player", "Failed to initialize");
     }
 }
